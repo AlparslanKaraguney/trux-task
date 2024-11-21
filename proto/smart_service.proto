@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package smartservice;
+
+option go_package = "/proto;smartservice";
+
+service SmartService {
+  rpc CreateSmartModel(SmartModelRequest) returns (SmartModelResponse);
+  rpc GetSmartModel(SmartModelQuery) returns (SmartModelResponse);
+  rpc CreateSmartFeature(SmartFeatureRequest) returns (SmartFeatureResponse);
+  rpc GetSmartFeature(SmartFeatureQuery) returns (SmartFeatureResponse);
+}
+
+message SmartModel {
+  int32 id = 1;
+  string name = 2;
+  string identifier = 3;
+  string type = 4;
+  string category = 5;
+  repeated SmartFeature features = 6;
+}
+
+message SmartFeature {
+  int32 id = 1;
+  string name = 2;
+  string identifier = 3;
+  string functionality = 4;
+  int32 model_id = 5;
+}
+
+message SmartModelRequest {
+  SmartModel model = 1;
+}
+
+message SmartModelResponse {
+  SmartModel model = 1;
+}
+
+message SmartModelQuery {
+  string identifier = 1;
+}
+
+message SmartFeatureRequest {
+  SmartFeature feature = 1;
+}
+
+message SmartFeatureResponse {
+  SmartFeature feature = 1;
+}
+
+message SmartFeatureQuery {
+  string identifier = 1;
+}
