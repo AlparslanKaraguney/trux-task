@@ -24,61 +24,42 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	// // Create a SmartFeature
-	// featureReq := &pb.SmartFeatureRequest{
-	// 	Feature: &pb.SmartFeature{
-	// 		Name:          "Get Heart Rate",
-	// 		Identifier:    "sw-hr-001",
-	// 		Functionality: "Retrieve current heart rate",
-	// 		ModelId:       1,
-	// 	},
-	// }
+	smartFuture := &pb.SmartFeature{
+		Name:          "Future",
+		Identifier:    "f-001",
+		Functionality: "Predict the future",
+		SmartModelId:  1,
+	}
 
-	// featureRes, err := client.CreateSmartFeature(ctx, featureReq)
-	// if err != nil {
-	// 	log.Fatalf("Could not create SmartFeature: %v", err)
-	// }
+	res, err := client.CreateSmartFeature(ctx, &pb.SmartFeatureRequest{Feature: smartFuture})
+	if err != nil {
+		log.Fatalf("Could not create SmartFeature: %v", err)
+	}
 
-	// log.Printf("Created SmartFeature: %v", featureRes.Feature)
-
-	// // Create a SmartFeature
-	// featureReq2 := &pb.SmartFeatureRequest{
-	// 	Feature: &pb.SmartFeature{
-	// 		Name:          "Get Heart Rate 2",
-	// 		Identifier:    "sw-hr-002",
-	// 		Functionality: "Retrieve current heart rate 2",
-	// 		ModelId:       1,
-	// 	},
-	// }
-
-	// featureRes2, err := client.CreateSmartFeature(ctx, featureReq2)
-	// if err != nil {
-	// 	log.Fatalf("Could not create SmartFeature: %v", err)
-	// }
-
-	// log.Printf("Created SmartFeature: %v", featureRes2.Feature)
+	log.Printf("Created SmartFeature: %v", res.Feature)
 
 	// Create a SmartModel
 	// modelReq := &pb.SmartModelRequest{
 	// 	Model: &pb.SmartModel{
-	// 		Name:       "Smart Watch 2",
+	// 		Name:       "Smart Watch 1",
 	// 		Identifier: "sw-002",
 	// 		Type:       "Device",
 	// 		Category:   "Wearable",
 	// 	},
 	// }
 
-	// modelRes, err := client.CreateSmartModel(ctx, modelReq)
+	// createModelRes, err := client.CreateSmartModel(ctx, modelReq)
 	// if err != nil {
 	// 	log.Fatalf("Could not create SmartModel: %v", err)
 	// }
-	// log.Printf("Created SmartModel: %v", modelRes.Model)
 
 	// Retrieve the SmartModel
-	modelQuery := &pb.SmartModelQuery{Identifier: "sw-002"}
-	getModelRes, err := client.GetSmartModel(ctx, modelQuery)
-	if err != nil {
-		log.Fatalf("Could not get SmartModel: %v", err)
-	}
-	log.Printf("Retrieved SmartModel: %v", getModelRes.Model)
+	// modelQuery := &pb.SmartModelQuery{Identifier: "sw-002"}
+	// getModelRes, err := client.GetSmartModel(ctx, modelQuery)
+	// if err != nil {
+	// 	log.Fatalf("Could not get SmartModel: %v", err)
+	// }
+
+	// log.Println(getModelRes.Model.Features)
+	// log.Printf("Retrieved SmartModel: %v", getModelRes.Model)
 }

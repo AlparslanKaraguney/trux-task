@@ -7,8 +7,13 @@ option go_package = "/proto;smartservice";
 service SmartService {
   rpc CreateSmartModel(SmartModelRequest) returns (SmartModelResponse);
   rpc GetSmartModel(SmartModelQuery) returns (SmartModelResponse);
+  rpc UpdateSmartModel(SmartModelRequest) returns (SmartModelResponse);
+  rpc DeleteSmartModel(SmartModelQuery) returns (DeleteResponse);
+
   rpc CreateSmartFeature(SmartFeatureRequest) returns (SmartFeatureResponse);
   rpc GetSmartFeature(SmartFeatureQuery) returns (SmartFeatureResponse);
+  rpc UpdateSmartFeature(SmartFeatureRequest) returns (SmartFeatureResponse);
+  rpc DeleteSmartFeature(SmartFeatureQuery) returns (DeleteResponse);
 }
 
 message SmartModel {
@@ -25,7 +30,7 @@ message SmartFeature {
   string name = 2;
   string identifier = 3;
   string functionality = 4;
-  int32 model_id = 5;
+  int32 smart_model_id = 5;
 }
 
 message SmartModelRequest {
@@ -37,7 +42,7 @@ message SmartModelResponse {
 }
 
 message SmartModelQuery {
-  string identifier = 1;
+  int32 id = 1;
 }
 
 message SmartFeatureRequest {
@@ -49,5 +54,10 @@ message SmartFeatureResponse {
 }
 
 message SmartFeatureQuery {
-  string identifier = 1;
+  int32 id = 1;
+}
+
+message DeleteResponse {
+  string message = 1;
+  bool success = 2;
 }

@@ -6,7 +6,7 @@ type SmartModel struct {
 	Identifier string         `gorm:"uniqueIndex" json:"identifier"`
 	Type       string         `gorm:"not null" json:"type"`
 	Category   string         `gorm:"not null" json:"category"`
-	Features   []SmartFeature `gorm:"foreignKey:ModelID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"features"`
+	Features   []SmartFeature `gorm:"foreignKey:SmartModelID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"features"`
 }
 
 type SmartFeature struct {
@@ -14,6 +14,6 @@ type SmartFeature struct {
 	Name          string     `json:"name"`
 	Identifier    string     `gorm:"uniqueIndex" json:"identifier"`
 	Functionality string     `json:"functionality"`
-	ModelID       int32      `gorm:"index" json:"model_id"`
-	Model         SmartModel `gorm:"foreignKey:ModelID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"model"`
+	SmartModelID  int32      `gorm:"not null" json:"model_id"`
+	SmartModel    SmartModel `gorm:"foreignKey:SmartModelID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"model"`
 }

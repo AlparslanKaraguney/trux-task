@@ -76,7 +76,7 @@ func generateSampleData(store storage.Storage) {
 		Name:          "Get Heart Rate",
 		Identifier:    "sw-hr-001",
 		Functionality: "Retrieve current heart rate",
-		ModelID:       model.ID,
+		SmartModelID:  model.ID,
 	}
 	store.CreateSmartFeature(feature)
 }

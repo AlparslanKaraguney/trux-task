@@ -11,7 +11,7 @@ func convertToProtoSmartFeature(feature *models.SmartFeature) *pb.SmartFeature {
 		Name:          feature.Name,
 		Identifier:    feature.Identifier,
 		Functionality: feature.Functionality,
-		ModelId:       feature.ModelID,
+		SmartModelId:  feature.SmartModelID,
 	}
 }
 

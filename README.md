@@ -1,10 +1,11 @@
 ## Update proto files using:
 
 ```
-protoc --go_out=. --go-grpc_out=. proto/smart_service.proto
+protoc --go_out=./ --go-grpc_out=./ proto/smart_service.proto
+
 ```
 
-# Gerenate Mocks
+# Generate Mocks
 
 ````
 mockgen -source=internal/storage/storage.go -destination=internal/mocks/mock_storage.go -package=mocks

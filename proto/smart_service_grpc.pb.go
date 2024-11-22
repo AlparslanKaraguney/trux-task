@@ -21,8 +21,12 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	SmartService_CreateSmartModel_FullMethodName   = "/smartservice.SmartService/CreateSmartModel"
 	SmartService_GetSmartModel_FullMethodName      = "/smartservice.SmartService/GetSmartModel"
+	SmartService_UpdateSmartModel_FullMethodName   = "/smartservice.SmartService/UpdateSmartModel"
+	SmartService_DeleteSmartModel_FullMethodName   = "/smartservice.SmartService/DeleteSmartModel"
 	SmartService_CreateSmartFeature_FullMethodName = "/smartservice.SmartService/CreateSmartFeature"
 	SmartService_GetSmartFeature_FullMethodName    = "/smartservice.SmartService/GetSmartFeature"
+	SmartService_UpdateSmartFeature_FullMethodName = "/smartservice.SmartService/UpdateSmartFeature"
+	SmartService_DeleteSmartFeature_FullMethodName = "/smartservice.SmartService/DeleteSmartFeature"
 )
 
 // SmartServiceClient is the client API for SmartService service.
@@ -31,8 +35,12 @@ const (
 type SmartServiceClient interface {
 	CreateSmartModel(ctx context.Context, in *SmartModelRequest, opts ...grpc.CallOption) (*SmartModelResponse, error)
 	GetSmartModel(ctx context.Context, in *SmartModelQuery, opts ...grpc.CallOption) (*SmartModelResponse, error)
+	UpdateSmartModel(ctx context.Context, in *SmartModelRequest, opts ...grpc.CallOption) (*SmartModelResponse, error)
+	DeleteSmartModel(ctx context.Context, in *SmartModelQuery, opts ...grpc.CallOption) (*DeleteResponse, error)
 	CreateSmartFeature(ctx context.Context, in *SmartFeatureRequest, opts ...grpc.CallOption) (*SmartFeatureResponse, error)
 	GetSmartFeature(ctx context.Context, in *SmartFeatureQuery, opts ...grpc.CallOption) (*SmartFeatureResponse, error)
+	UpdateSmartFeature(ctx context.Context, in *SmartFeatureRequest, opts ...grpc.CallOption) (*SmartFeatureResponse, error)
+	DeleteSmartFeature(ctx context.Context, in *SmartFeatureQuery, opts ...grpc.CallOption) (*DeleteResponse, error)
 }
 
 type smartServiceClient struct {
@@ -63,6 +71,26 @@ func (c *smartServiceClient) GetSmartModel(ctx context.Context, in *SmartModelQu
 	return out, nil
 }
 
+func (c *smartServiceClient) UpdateSmartModel(ctx context.Context, in *SmartModelRequest, opts ...grpc.CallOption) (*SmartModelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SmartModelResponse)
+	err := c.cc.Invoke(ctx, SmartService_UpdateSmartModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *smartServiceClient) DeleteSmartModel(ctx context.Context, in *SmartModelQuery, opts ...grpc.CallOption) (*DeleteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteResponse)
+	err := c.cc.Invoke(ctx, SmartService_DeleteSmartModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *smartServiceClient) CreateSmartFeature(ctx context.Context, in *SmartFeatureRequest, opts ...grpc.CallOption) (*SmartFeatureResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SmartFeatureResponse)
@@ -83,14 +111,38 @@ func (c *smartServiceClient) GetSmartFeature(ctx context.Context, in *SmartFeatu
 	return out, nil
 }
 
+func (c *smartServiceClient) UpdateSmartFeature(ctx context.Context, in *SmartFeatureRequest, opts ...grpc.CallOption) (*SmartFeatureResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SmartFeatureResponse)
+	err := c.cc.Invoke(ctx, SmartService_UpdateSmartFeature_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *smartServiceClient) DeleteSmartFeature(ctx context.Context, in *SmartFeatureQuery, opts ...grpc.CallOption) (*DeleteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteResponse)
+	err := c.cc.Invoke(ctx, SmartService_DeleteSmartFeature_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SmartServiceServer is the server API for SmartService service.
 // All implementations must embed UnimplementedSmartServiceServer
 // for forward compatibility.
 type SmartServiceServer interface {
 	CreateSmartModel(context.Context, *SmartModelRequest) (*SmartModelResponse, error)
 	GetSmartModel(context.Context, *SmartModelQuery) (*SmartModelResponse, error)
+	UpdateSmartModel(context.Context, *SmartModelRequest) (*SmartModelResponse, error)
+	DeleteSmartModel(context.Context, *SmartModelQuery) (*DeleteResponse, error)
 	CreateSmartFeature(context.Context, *SmartFeatureRequest) (*SmartFeatureResponse, error)
 	GetSmartFeature(context.Context, *SmartFeatureQuery) (*SmartFeatureResponse, error)
+	UpdateSmartFeature(context.Context, *SmartFeatureRequest) (*SmartFeatureResponse, error)
+	DeleteSmartFeature(context.Context, *SmartFeatureQuery) (*DeleteResponse, error)
 	mustEmbedUnimplementedSmartServiceServer()
 }
 
@@ -107,11 +159,23 @@ func (UnimplementedSmartServiceServer) CreateSmartModel(context.Context, *SmartM
 func (UnimplementedSmartServiceServer) GetSmartModel(context.Context, *SmartModelQuery) (*SmartModelResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSmartModel not implemented")
 }
+func (UnimplementedSmartServiceServer) UpdateSmartModel(context.Context, *SmartModelRequest) (*SmartModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSmartModel not implemented")
+}
+func (UnimplementedSmartServiceServer) DeleteSmartModel(context.Context, *SmartModelQuery) (*DeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSmartModel not implemented")
+}
 func (UnimplementedSmartServiceServer) CreateSmartFeature(context.Context, *SmartFeatureRequest) (*SmartFeatureResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSmartFeature not implemented")
 }
 func (UnimplementedSmartServiceServer) GetSmartFeature(context.Context, *SmartFeatureQuery) (*SmartFeatureResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSmartFeature not implemented")
+}
+func (UnimplementedSmartServiceServer) UpdateSmartFeature(context.Context, *SmartFeatureRequest) (*SmartFeatureResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSmartFeature not implemented")
+}
+func (UnimplementedSmartServiceServer) DeleteSmartFeature(context.Context, *SmartFeatureQuery) (*DeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSmartFeature not implemented")
 }
 func (UnimplementedSmartServiceServer) mustEmbedUnimplementedSmartServiceServer() {}
 func (UnimplementedSmartServiceServer) testEmbeddedByValue()                      {}
@@ -170,6 +234,42 @@ func _SmartService_GetSmartModel_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SmartService_UpdateSmartModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SmartModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SmartServiceServer).UpdateSmartModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SmartService_UpdateSmartModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SmartServiceServer).UpdateSmartModel(ctx, req.(*SmartModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SmartService_DeleteSmartModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SmartModelQuery)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SmartServiceServer).DeleteSmartModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SmartService_DeleteSmartModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SmartServiceServer).DeleteSmartModel(ctx, req.(*SmartModelQuery))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SmartService_CreateSmartFeature_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SmartFeatureRequest)
 	if err := dec(in); err != nil {
@@ -206,6 +306,42 @@ func _SmartService_GetSmartFeature_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SmartService_UpdateSmartFeature_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SmartFeatureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SmartServiceServer).UpdateSmartFeature(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SmartService_UpdateSmartFeature_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SmartServiceServer).UpdateSmartFeature(ctx, req.(*SmartFeatureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SmartService_DeleteSmartFeature_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SmartFeatureQuery)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SmartServiceServer).DeleteSmartFeature(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SmartService_DeleteSmartFeature_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SmartServiceServer).DeleteSmartFeature(ctx, req.(*SmartFeatureQuery))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SmartService_ServiceDesc is the grpc.ServiceDesc for SmartService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -222,12 +358,28 @@ var SmartService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SmartService_GetSmartModel_Handler,
 		},
 		{
+			MethodName: "UpdateSmartModel",
+			Handler:    _SmartService_UpdateSmartModel_Handler,
+		},
+		{
+			MethodName: "DeleteSmartModel",
+			Handler:    _SmartService_DeleteSmartModel_Handler,
+		},
+		{
 			MethodName: "CreateSmartFeature",
 			Handler:    _SmartService_CreateSmartFeature_Handler,
 		},
 		{
 			MethodName: "GetSmartFeature",
 			Handler:    _SmartService_GetSmartFeature_Handler,
+		},
+		{
+			MethodName: "UpdateSmartFeature",
+			Handler:    _SmartService_UpdateSmartFeature_Handler,
+		},
+		{
+			MethodName: "DeleteSmartFeature",
+			Handler:    _SmartService_DeleteSmartFeature_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

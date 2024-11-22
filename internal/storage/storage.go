@@ -10,11 +10,17 @@ import (
 
 var ErrNotFound = errors.New("record not found")
 
+//go:generate mockgen -source=storage.go -destination=mocks/mock_storage.go -package=mocks
 type Storage interface {
 	CreateSmartModel(model *models.SmartModel) error
-	GetSmartModel(identifier string) (*models.SmartModel, error)
+	GetSmartModel(id int32) (*models.SmartModel, error)
+	UpdateSmartModel(model *models.SmartModel) error
+	DeleteSmartModel(id int32) error
+
 	CreateSmartFeature(feature *models.SmartFeature) error
-	GetSmartFeature(identifier string) (*models.SmartFeature, error)
+	GetSmartFeature(id int32) (*models.SmartFeature, error)
+	UpdateSmartFeature(feature *models.SmartFeature) error
+	DeleteSmartFeature(id int32) error
 }
 
 type storageImpl struct {
@@ -22,8 +28,6 @@ type storageImpl struct {
 }
 
 func NewStorage(connection *gorm.DB) (Storage, error) {
-	// Create a GORM Logrus Logger
-
 	return &storageImpl{db: connection}, nil
 }
 
@@ -31,24 +35,41 @@ func (s *storageImpl) CreateSmartModel(model *models.SmartModel) error {
 	return s.db.Create(model).Error
 }
 
-func (s *storageImpl) GetSmartModel(identifier string) (*models.SmartModel, error) {
+func (s *storageImpl) GetSmartModel(id int32) (*models.SmartModel, error) {
 	var model models.SmartModel
-	result := s.db.Preload("Features").Where("identifier = ?", identifier).First(&model)
+	result := s.db.Preload("Features").Where("id = ?", id).First(&model)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, ErrNotFound
 	}
 	return &model, result.Error
 }
 
+func (s *storageImpl) UpdateSmartModel(model *models.SmartModel) error {
+	return s.db.Save(model).Error
+}
+
+func (s *storageImpl) DeleteSmartModel(id int32) error {
+	return s.db.Where("id = ?", id).Delete(&models.SmartModel{}).Error
+}
+
 func (s *storageImpl) CreateSmartFeature(feature *models.SmartFeature) error {
 	return s.db.Create(feature).Error
 }
 
-func (s *storageImpl) GetSmartFeature(identifier string) (*models.SmartFeature, error) {
+func (s *storageImpl) GetSmartFeature(id int32) (*models.SmartFeature, error) {
 	var feature models.SmartFeature
-	result := s.db.Where("identifier = ?", identifier).First(&feature)
+	result := s.db.Preload("SmartModel").
+		Where("id = ?", id).First(&feature)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, ErrNotFound
 	}
 	return &feature, result.Error
+}
+
+func (s *storageImpl) UpdateSmartFeature(feature *models.SmartFeature) error {
+	return s.db.Save(feature).Error
+}
+
+func (s *storageImpl) DeleteSmartFeature(id int32) error {
+	return s.db.Where("id = ?", id).Delete(&models.SmartFeature{}).Error
 }
