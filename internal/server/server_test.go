@@ -280,3 +280,78 @@ func TestDeleteSmartFeature(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
 }
+
+// func TestListSmartModels(t *testing.T) {
+// 	ctrl := gomock.NewController(t)
+// 	defer ctrl.Finish()
+
+// 	mockStorage := mocks.NewMockStorage(ctrl)
+
+// 	sminstance := &models.SmartModel{
+// 		ID:         1,
+// 		Name:       "Smart Watch",
+// 		Identifier: "sw-001",
+// 		Type:       "Device",
+// 		Category:   "Wearable",
+// 		Features: []models.SmartFeature{
+// 			{
+// 				ID:            1,
+// 				Name:          "Future",
+// 				Identifier:    "f-001",
+// 				Functionality: "Predict the future",
+// 				SmartModelID:  1,
+// 			},
+// 		},
+// 	}
+
+// 	mockStorage.
+// 		EXPECT().
+// 		ListSmartModels().
+// 		Return([]*models.SmartModel{sminstance}, nil).
+// 		Times(1)
+
+// 	server := &SmartServiceServer{
+// 		Storage: mockStorage,
+// 	}
+
+// 	ctx := context.Background()
+
+// 	req := &pb.Empty{}
+
+// 	res, err := server.ListSmartModels(ctx, req)
+// 	assert.NoError(t, err)
+// 	assert.Equal(t, 1, len(res.Models))
+// }
+
+// func TestListSmartFeatures(t *testing.T) {
+// 	ctrl := gomock.NewController(t)
+// 	defer ctrl.Finish()
+
+// 	mockStorage := mocks.NewMockStorage(ctrl)
+
+// 	sfinstance := &models.SmartFeature{
+// 		ID:            1,
+// 		Name:          "Future",
+// 		Identifier:    "f-001",
+// 		Functionality: "Predict the future",
+// 		SmartModelID:  1,
+// 	}
+
+// 	mockStorage.
+// 		EXPECT().
+// 		ListSmartFeatures().
+// 		Return([]*models.SmartFeature{sfinstance}, nil).
+// 		Times(1)
+
+// 	server := &SmartServiceServer{
+// 		Storage: mockStorage,
+// 	}
+
+// 	ctx := context.Background()
+
+// 	req := &pb.Empty{}
+
+// 	res, err := server.ListSmartFeatures(ctx, req)
+// 	assert.NoError(t, err)
+// 	assert.Equal(t, 1, len(res.Features))
+// }

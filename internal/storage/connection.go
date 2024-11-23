@@ -2,6 +2,7 @@ package storage
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"sync"
 
@@ -47,5 +48,34 @@ func initialize(logrusLogger *logrus.Logger) *gorm.DB {
 	// Auto migrate the schema
 	db.AutoMigrate(&models.SmartModel{}, &models.SmartFeature{})
 
+	return db
+}
+
+func MockConnection() (*gorm.DB, func()) {
+	once.Do(func() {
+		connection = initializeMock()
+	})
+
+	cleanupMock := func() {
+		connection.Exec("TRUNCATE TABLE smart_models RESTART IDENTITY CASCADE")
+		connection.Exec("TRUNCATE TABLE smart_features RESTART IDENTITY CASCADE")
+		connection.Commit()
+	}
+
+	return connection, cleanupMock
+}
+
+func initializeMock() *gorm.DB {
+	// gormLogger := gormlogger.NewLogrusGORMLogger(logrusLogger, logger.Error)
+
+	dbUrl := "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable timezone=Europe/Istanbul"
+
+	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	// Auto migrate the schema
+	db.AutoMigrate(&models.SmartModel{}, &models.SmartFeature{})
 	return db
 }

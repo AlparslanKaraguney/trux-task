@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smart-service
+  template:
+    metadata:
+      labels:
+        app: smart-service
+    spec:
+      initContainers:
+          - name: wait-for-postgres
+            image: busybox:1.35
+            command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done;']
+      containers:
+        - name: smart-service
+          image: smart-service:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_HOST
+              value: "postgres"
+            - name: DATABASE_USER
+              value: "postgres"
+            - name: DATABASE_PASS
+              value: "postgres"
+            - name: DATABASE_NAME
+              value: "postgres"
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: ENV
+              value: "development"
+            - name: GRPC_SERVER_PORT
+              value: "50051"
+            - name: HTTP_SERVER_PORT
+              value: "8080"
+          ports:
+            - name: grpc
+              containerPort: 50051
+              protocol: TCP
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10

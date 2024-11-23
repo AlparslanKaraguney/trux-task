@@ -34,3 +34,35 @@ sh coverage.sh
 start coverage.html
 ```
 ````
+
+## Minikube Deployment
+
+Start minikube
+
+```
+minikube start
+```
+
+Point shell to minikube docker-daemon
+
+```
+eval $(minikube docker-env)
+```
+
+Build docker image in minikube
+
+```
+docker build -t smart-service:latest .
+```
+
+Run "runs.sh" file to apply yml files
+
+```
+sh kubernetes/run.sh
+```
+
+For testing purposes start a tunnel with minikube so we can reach services from our localhost
+
+```
+minikube tunnel
+```
