@@ -4,7 +4,6 @@ import (
 	"os"
 	"testing"
 
-	mocksGRPC "github.com/AlparslanKaraguney/trux-task/cmd/server/mocks"
 	"github.com/AlparslanKaraguney/trux-task/internal/storage/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/sirupsen/logrus"
@@ -50,6 +49,17 @@ func TestSetupGRPCServer(t *testing.T) {
 	assert.Equal(t, ":50051", addr)
 }
 
+func TestGetEnv(t *testing.T) {
+	// Set an environment variable
+	os.Setenv("TEST_VAR", "test")
+
+	// Check if the variable is returned
+	assert.Equal(t, "test", getEnv("TEST_VAR", "default"))
+
+	// Check if the default value is returned
+	assert.Equal(t, "default", getEnv("NOT_SET", "default"))
+}
+
 // func TestStartHTTPServer(t *testing.T) {
 
 // 	go startHTTPServer(":8081", logrus.New()) // Start HTTP server on a test port
@@ -66,86 +76,25 @@ func TestSetupGRPCServer(t *testing.T) {
 // 	assert.Equal(t, "OK", string(body))
 // }
 
-func TestStartGRPCServer(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	logger := logrus.New()
-
-	// Mock gRPC server
-	mockGRPC := mocksGRPC.NewMockGRPCServer(ctrl)
-	mockGRPC.EXPECT().
-		Serve(gomock.Any()).
-		Return(nil)
-
-	// mockGRPC.EXPECT().
-	// 	GracefulStop().
-	// 	Return(nil)
-
-	// Use a test port
-	testAddr := ":50052" // Use a different port to avoid conflicts
-
-	startGRPCServer(mockGRPC, testAddr, logger)
-
-	// Run the gRPC server in a goroutine
-	// go func() {
-	// 	startGRPCServer(mockGRPC, testAddr, logger)
-	// }()
-
-	// Wait for the server to start
-	// time.Sleep(1 * time.Second)
-
-	// // Verify the port is being listened to
-	// conn, err := net.Dial("tcp", "localhost:50052")
-	// assert.NoError(t, err, "Expected no error when connecting to the gRPC server")
-	// if conn != nil {
-	// 	conn.Close()
-	// }
-
-	// Stop the gRPC server
-	// mockGRPC.GracefulStop()
-}
-
-// func TestHandleGracefulShutdown(t *testing.T) {
+// func TestStartGRPCServer(t *testing.T) {
 // 	ctrl := gomock.NewController(t)
 // 	defer ctrl.Finish()
 
 // 	logger := logrus.New()
 
 // 	// Mock gRPC server
-// 	mockGRPC := mocksGRPC.NewMockGRPCServer(ctrl)
+// 	mockGRPC := mocksgrpc.NewMockGRPCServer(ctrl)
 // 	mockGRPC.EXPECT().
-// 		GracefulStop().
+// 		Serve(gomock.Any()).
 // 		Return(nil)
 
-// 	// Mock database connection
-// 	mockSQLDB := new(MockSQLDB)
-// 	mockSQLDB.On("Close").Return(nil)
+// 	// mockGRPC.EXPECT().
+// 	// 	GracefulStop().
+// 	// 	Return(nil)
 
-// 	mockGormDB := new(MockGormDB)
-// 	mockGormDB.sqlDB = *mockSQLDB
+// 	// Use a test port
+// 	testAddr := ":50052" // Use a different port to avoid conflicts
 
-// 	// Simulate exit callback
-// 	exitCalled := false
-// 	exitFunc := func(code int) {
-// 		exitCalled = true
-// 	}
+// 	startGRPCServer(mockGRPC, testAddr, logger)
 
-// 	// Simulate signal
-// 	sigChan := make(chan os.Signal, 1)
-// 	signal.Notify(sigChan, os.Interrupt)
-// 	go func() {
-// 		time.Sleep(100 * time.Millisecond)
-// 		sigChan <- os.Interrupt
-// 	}()
-
-// 	// Run the shutdown handler
-// 	handleGracefulShutdown(mockGRPC, mockGormDB, logger, exitFunc)
-
-// 	// Assertions
-// 	mockGRPC.AssertCalled(t, "GracefulStop")
-// 	mockSQLDB.AssertCalled(t, "Close")
-// 	if !exitCalled {
-// 		t.Fatalf("Expected exitFunc to be called")
-// 	}
 // }

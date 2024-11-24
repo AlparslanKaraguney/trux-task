@@ -51,7 +51,7 @@ func (l *LogrusGORMLogger) Error(ctx context.Context, msg string, data ...interf
 
 // Trace logs SQL queries with execution time
 func (l *LogrusGORMLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
-	if l.level <= 0 {
+	if l.level <= logger.Silent {
 		return
 	}
 

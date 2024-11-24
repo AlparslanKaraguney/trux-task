@@ -2,7 +2,6 @@ package storage
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"sync"
 
@@ -27,7 +26,19 @@ func Connection(logrusLogger *logrus.Logger) *gorm.DB {
 }
 
 func initialize(logrusLogger *logrus.Logger) *gorm.DB {
-	gormLogger := gormlogger.NewLogrusGORMLogger(logrusLogger, logger.Info)
+	databaseLogLevel := os.Getenv("DATABASE_LOG_LEVEL")
+	DBLogLevel := logger.Info
+	switch databaseLogLevel {
+	case "silent":
+		DBLogLevel = logger.Silent
+	case "error":
+		DBLogLevel = logger.Error
+	case "warn":
+		DBLogLevel = logger.Warn
+	default:
+		DBLogLevel = logger.Info
+	}
+	gormLogger := gormlogger.NewLogrusGORMLogger(logrusLogger, DBLogLevel)
 
 	dbUrl := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable timezone=Europe/Istanbul",
@@ -48,34 +59,5 @@ func initialize(logrusLogger *logrus.Logger) *gorm.DB {
 	// Auto migrate the schema
 	db.AutoMigrate(&models.SmartModel{}, &models.SmartFeature{})
 
-	return db
-}
-
-func MockConnection() (*gorm.DB, func()) {
-	once.Do(func() {
-		connection = initializeMock()
-	})
-
-	cleanupMock := func() {
-		connection.Exec("TRUNCATE TABLE smart_models RESTART IDENTITY CASCADE")
-		connection.Exec("TRUNCATE TABLE smart_features RESTART IDENTITY CASCADE")
-		connection.Commit()
-	}
-
-	return connection, cleanupMock
-}
-
-func initializeMock() *gorm.DB {
-	// gormLogger := gormlogger.NewLogrusGORMLogger(logrusLogger, logger.Error)
-
-	dbUrl := "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable timezone=Europe/Istanbul"
-
-	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
-
-	// Auto migrate the schema
-	db.AutoMigrate(&models.SmartModel{}, &models.SmartFeature{})
 	return db
 }

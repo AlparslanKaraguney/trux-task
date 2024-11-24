@@ -32,7 +32,8 @@ func NewStorage(connection *gorm.DB) (Storage, error) {
 }
 
 func (s *storageImpl) CreateSmartModel(model *models.SmartModel) error {
-	return s.db.Create(model).Error
+	result := s.db.Create(model)
+	return result.Error
 }
 
 func (s *storageImpl) GetSmartModel(id int32) (*models.SmartModel, error) {
@@ -45,15 +46,25 @@ func (s *storageImpl) GetSmartModel(id int32) (*models.SmartModel, error) {
 }
 
 func (s *storageImpl) UpdateSmartModel(model *models.SmartModel) error {
-	return s.db.Save(model).Error
+	if err := s.db.First(&models.SmartModel{}, model.ID).Error; err != nil {
+		return ErrNotFound
+	}
+
+	result := s.db.Updates(model)
+
+	return result.Error
 }
 
 func (s *storageImpl) DeleteSmartModel(id int32) error {
+	if err := s.db.First(&models.SmartModel{}, id).Error; err != nil {
+		return ErrNotFound
+	}
 	return s.db.Where("id = ?", id).Delete(&models.SmartModel{}).Error
 }
 
 func (s *storageImpl) CreateSmartFeature(feature *models.SmartFeature) error {
-	return s.db.Create(feature).Error
+	result := s.db.Create(feature)
+	return result.Error
 }
 
 func (s *storageImpl) GetSmartFeature(id int32) (*models.SmartFeature, error) {
@@ -67,9 +78,17 @@ func (s *storageImpl) GetSmartFeature(id int32) (*models.SmartFeature, error) {
 }
 
 func (s *storageImpl) UpdateSmartFeature(feature *models.SmartFeature) error {
-	return s.db.Save(feature).Error
+	if err := s.db.First(&models.SmartFeature{}, feature.ID).Error; err != nil {
+		return ErrNotFound
+	}
+	result := s.db.Save(feature)
+
+	return result.Error
 }
 
 func (s *storageImpl) DeleteSmartFeature(id int32) error {
+	if err := s.db.First(&models.SmartFeature{}, id).Error; err != nil {
+		return ErrNotFound
+	}
 	return s.db.Where("id = ?", id).Delete(&models.SmartFeature{}).Error
 }

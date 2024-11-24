@@ -30,7 +30,7 @@ func main() {
 	validateEnvVars([]string{
 		"DATABASE_HOST", "DATABASE_USER", "DATABASE_PASS",
 		"DATABASE_NAME", "DATABASE_PORT", "GRPC_SERVER_PORT",
-		"HTTP_SERVER_PORT", "ENV",
+		"HTTP_SERVER_PORT", "ENV", "DATABASE_LOG_LEVEL",
 	})
 
 	// Initialize database connection
@@ -107,8 +107,6 @@ func getEnv(key, defaultValue string) string {
 }
 
 // handleGracefulShutdown handles clean shutdown on SIGINT or SIGTERM
-//
-
 func handleGracefulShutdown(grpcServer grpcserver.GRPCServer, connection *gorm.DB, logger *logrus.Logger, exitFunc func(code int)) {
 	// Create a channel to listen for OS signals
 	sigChan := make(chan os.Signal, 1)

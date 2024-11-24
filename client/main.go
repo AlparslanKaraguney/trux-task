@@ -39,22 +39,22 @@ func main() {
 	// log.Printf("Created SmartFeature: %v", res.Feature)
 
 	// Create a SmartModel
-	// modelReq := &pb.SmartModelRequest{
-	// 	Model: &pb.SmartModel{
-	// 		Name:       "Smart Watch 1",
-	// 		Identifier: "sw-002",
-	// 		Type:       "Device",
-	// 		Category:   "Wearable",
-	// 	},
-	// }
+	modelReq := &pb.SmartModelRequest{
+		Model: &pb.SmartModel{
+			Name:       "Smart Watch 2",
+			Identifier: "sw-003",
+			Type:       "Device",
+			Category:   "Wearable",
+		},
+	}
 
-	// createModelRes, err := client.CreateSmartModel(ctx, modelReq)
-	// if err != nil {
-	// 	log.Fatalf("Could not create SmartModel: %v", err)
-	// }
+	createModelRes, err := client.CreateSmartModel(ctx, modelReq)
+	if err != nil {
+		log.Fatalf("Could not create SmartModel: %v", err)
+	}
 
 	// Retrieve the SmartModel
-	modelQuery := &pb.SmartModelQuery{Id: 1}
+	modelQuery := &pb.SmartModelQuery{Id: createModelRes.Model.Id}
 	getModelRes, err := client.GetSmartModel(ctx, modelQuery)
 	if err != nil {
 		log.Fatalf("Could not get SmartModel: %v", err)
