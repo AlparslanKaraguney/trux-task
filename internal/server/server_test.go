@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
+	"github.com/AlparslanKaraguney/trux-task/internal/entities"
 	"github.com/AlparslanKaraguney/trux-task/internal/models"
-	"github.com/AlparslanKaraguney/trux-task/internal/storage"
 	"github.com/AlparslanKaraguney/trux-task/internal/storage/mocks"
+	apperrors "github.com/AlparslanKaraguney/trux-task/pkg/errors"
 	pb "github.com/AlparslanKaraguney/trux-task/proto"
-	"github.com/jackc/pgx/v5/pgconn"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -291,16 +291,10 @@ func TestCreateDublicateSmartModel(t *testing.T) {
 
 	mockStorage := mocks.NewMockStorage(ctrl)
 
-	// Simulate the PostgreSQL error (duplicate key violation)
-	pgError := &pgconn.PgError{
-		Code:    "23505", // Unique constraint violation code
-		Message: "duplicate key value violates unique constraint",
-	}
-
 	mockStorage.
 		EXPECT().
 		CreateSmartModel(gomock.Any()).
-		Return(pgError).
+		Return(apperrors.ErrAlreadyExists).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -332,7 +326,7 @@ func TestUpdateSmartModelNotFound(t *testing.T) {
 	mockStorage.
 		EXPECT().
 		UpdateSmartModel(gomock.Any()).
-		Return(storage.ErrNotFound).
+		Return(apperrors.ErrNotFound).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -361,16 +355,10 @@ func TestUpdateDublicateSmartModel(t *testing.T) {
 
 	mockStorage := mocks.NewMockStorage(ctrl)
 
-	// Simulate the PostgreSQL error (duplicate key violation)
-	pgError := &pgconn.PgError{
-		Code:    "23505", // Unique constraint violation code
-		Message: "duplicate key value violates unique constraint",
-	}
-
 	mockStorage.
 		EXPECT().
 		UpdateSmartModel(gomock.Any()).
-		Return(pgError).
+		Return(apperrors.ErrAlreadyExists).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -403,7 +391,7 @@ func TestDeleteSmartModelNotFound(t *testing.T) {
 	mockStorage.
 		EXPECT().
 		DeleteSmartModel(gomock.Any()).
-		Return(storage.ErrNotFound).
+		Return(apperrors.ErrNotFound).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -428,7 +416,7 @@ func TestDeleteSmartFeatureNotFound(t *testing.T) {
 	mockStorage.
 		EXPECT().
 		DeleteSmartFeature(gomock.Any()).
-		Return(storage.ErrNotFound).
+		Return(apperrors.ErrNotFound).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -449,16 +437,10 @@ func TestCreateDublicateSmartFeature(t *testing.T) {
 
 	mockStorage := mocks.NewMockStorage(ctrl)
 
-	// Simulate the PostgreSQL error (duplicate key violation)
-	pgError := &pgconn.PgError{
-		Code:    "23505", // Unique constraint violation code
-		Message: "duplicate key value violates unique constraint",
-	}
-
 	mockStorage.
 		EXPECT().
 		CreateSmartFeature(gomock.Any()).
-		Return(pgError).
+		Return(apperrors.ErrAlreadyExists).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -490,7 +472,7 @@ func TestUpdateSmartFeatureNotFound(t *testing.T) {
 	mockStorage.
 		EXPECT().
 		UpdateSmartFeature(gomock.Any()).
-		Return(storage.ErrNotFound).
+		Return(apperrors.ErrNotFound).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -523,7 +505,7 @@ func TestGetSmartModelNotFound(t *testing.T) {
 	mockStorage.
 		EXPECT().
 		GetSmartModel(gomock.Any()).
-		Return(nil, storage.ErrNotFound).
+		Return(nil, apperrors.ErrNotFound).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -544,16 +526,10 @@ func TestUpdateSmartFeature_AlreadyExist(t *testing.T) {
 
 	mockStorage := mocks.NewMockStorage(ctrl)
 
-	// Simulate the PostgreSQL error (duplicate key violation)
-	pgError := &pgconn.PgError{
-		Code:    "23505", // Unique constraint violation code
-		Message: "duplicate key value violates unique constraint",
-	}
-
 	mockStorage.
 		EXPECT().
 		UpdateSmartFeature(gomock.Any()).
-		Return(pgError).
+		Return(apperrors.ErrAlreadyExists).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -582,16 +558,10 @@ func TestCreateSmartFeature_AlreadyExist(t *testing.T) {
 
 	mockStorage := mocks.NewMockStorage(ctrl)
 
-	// Simulate the PostgreSQL error (duplicate key violation)
-	pgError := &pgconn.PgError{
-		Code:    "23505", // Unique constraint violation code
-		Message: "duplicate key value violates unique constraint",
-	}
-
 	mockStorage.
 		EXPECT().
 		CreateSmartFeature(gomock.Any()).
-		Return(pgError).
+		Return(apperrors.ErrAlreadyExists).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -903,7 +873,7 @@ func TestGetSmartFeature_NotFound(t *testing.T) {
 	mockStorage.
 		EXPECT().
 		GetSmartFeature(gomock.Any()).
-		Return(nil, storage.ErrNotFound).
+		Return(nil, apperrors.ErrNotFound).
 		Times(1)
 
 	server := &SmartServiceServer{Storage: mockStorage}
@@ -968,77 +938,196 @@ func TestDeleteSmartFeature_InternalError(t *testing.T) {
 	}
 }
 
-// func TestListSmartModels(t *testing.T) {
-// 	ctrl := gomock.NewController(t)
-// 	defer ctrl.Finish()
+func TestListSmartModels(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-// 	mockStorage := mocks.NewMockStorage(ctrl)
+	mockStorage := mocks.NewMockStorage(ctrl)
 
-// 	sminstance := &models.SmartModel{
-// 		ID:         1,
-// 		Name:       "Smart Watch",
-// 		Identifier: "sw-001",
-// 		Type:       "Device",
-// 		Category:   "Wearable",
-// 		Features: []models.SmartFeature{
-// 			{
-// 				ID:            1,
-// 				Name:          "Future",
-// 				Identifier:    "f-001",
-// 				Functionality: "Predict the future",
-// 				SmartModelID:  1,
-// 			},
-// 		},
-// 	}
+	sminstances := []models.SmartModel{
+		{
+			ID:         1,
+			Name:       "Smart Watch",
+			Identifier: "sw-001",
+			Type:       "Device",
+			Category:   "Wearable",
+		},
+		{
+			ID:         2,
+			Name:       "Smart Phone",
+			Identifier: "sp-001",
+			Type:       "Device",
+			Category:   "Mobile",
+		},
+	}
 
-// 	mockStorage.
-// 		EXPECT().
-// 		ListSmartModels().
-// 		Return([]*models.SmartModel{sminstance}, nil).
-// 		Times(1)
+	pagionationObj := &entities.Pagination{
+		Limit:     10,
+		TotalRows: int64(len(sminstances)),
+		Offset:    0,
+	}
 
-// 	server := &SmartServiceServer{
-// 		Storage: mockStorage,
-// 	}
+	mockStorage.
+		EXPECT().
+		ListSmartModels(gomock.Any()).
+		Return(sminstances, pagionationObj, nil).
+		Times(1)
 
-// 	ctx := context.Background()
+	server := &SmartServiceServer{Storage: mockStorage}
 
-// 	req := &pb.Empty{}
+	req := &pb.SmartModelListQuery{
+		Identifier: "sw-001",
+	}
 
-// 	res, err := server.ListSmartModels(ctx, req)
-// 	assert.NoError(t, err)
-// 	assert.Equal(t, 1, len(res.Models))
-// }
+	res, err := server.ListSmartModel(context.Background(), req)
+	assert.NoError(t, err)
+	assert.Equal(t, len(sminstances), len(res.Data))
+}
 
-// func TestListSmartFeatures(t *testing.T) {
-// 	ctrl := gomock.NewController(t)
-// 	defer ctrl.Finish()
+func TestListSmartModels_InternalError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-// 	mockStorage := mocks.NewMockStorage(ctrl)
+	mockStorage := mocks.NewMockStorage(ctrl)
 
-// 	sfinstance := &models.SmartFeature{
-// 		ID:            1,
-// 		Name:          "Future",
-// 		Identifier:    "f-001",
-// 		Functionality: "Predict the future",
-// 		SmartModelID:  1,
-// 	}
+	// Simulate the storage error (internal error)
+	mockStorage.
+		EXPECT().
+		ListSmartModels(gomock.Any()).
+		Return(nil, nil, status.Errorf(codes.Internal, "Internal error")).
+		Times(1)
 
-// 	mockStorage.
-// 		EXPECT().
-// 		ListSmartFeatures().
-// 		Return([]*models.SmartFeature{sfinstance}, nil).
-// 		Times(1)
+	server := &SmartServiceServer{Storage: mockStorage}
 
-// 	server := &SmartServiceServer{
-// 		Storage: mockStorage,
-// 	}
+	req := &pb.SmartModelListQuery{}
 
-// 	ctx := context.Background()
+	_, err := server.ListSmartModel(context.Background(), req)
+	assert.Error(t, err)
+	// assert the error is Internal gives the correct error code
+	if status, ok := status.FromError(err); ok {
+		assert.Equal(t, codes.Internal, status.Code())
+	}
+}
 
-// 	req := &pb.Empty{}
+func TestListSmartModel_InvalidOrderBy(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-// 	res, err := server.ListSmartFeatures(ctx, req)
-// 	assert.NoError(t, err)
-// 	assert.Equal(t, 1, len(res.Features))
-// }
+	mockStorage := mocks.NewMockStorage(ctrl)
+
+	server := &SmartServiceServer{Storage: mockStorage}
+
+	req := &pb.SmartModelListQuery{
+		OrderBy: "invalid",
+	}
+
+	mockStorage.
+		EXPECT().
+		ListSmartModels(gomock.Any()).
+		Return(nil, nil, apperrors.ErrInvalidOrderBy).
+		Times(1)
+
+	_, err := server.ListSmartModel(context.Background(), req)
+	assert.Error(t, err)
+	// assert the error is InvalidArgument gives the correct error code
+	if status, ok := status.FromError(err); ok {
+		assert.Equal(t, codes.InvalidArgument, status.Code())
+	}
+}
+
+func TestListSmartFeature(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockStorage := mocks.NewMockStorage(ctrl)
+
+	sfinstances := []models.SmartFeature{
+		{
+			ID:            1,
+			Name:          "Future",
+			Identifier:    "f-001",
+			Functionality: "Predict the future",
+			SmartModelID:  1,
+		},
+		{
+			ID:            2,
+			Name:          "Past",
+			Identifier:    "p-001",
+			Functionality: "Predict the past",
+			SmartModelID:  2,
+		},
+	}
+
+	pagionationObj := &entities.Pagination{
+		Limit:     10,
+		TotalRows: int64(len(sfinstances)),
+		Offset:    0,
+	}
+
+	mockStorage.
+		EXPECT().
+		ListSmartFeatures(gomock.Any()).
+		Return(sfinstances, pagionationObj, nil).
+		Times(1)
+
+	server := &SmartServiceServer{Storage: mockStorage}
+
+	req := &pb.SmartFeatureListQuery{
+		Identifier: "f-001",
+	}
+
+	res, err := server.ListSmartFeature(context.Background(), req)
+	assert.NoError(t, err)
+	assert.Equal(t, len(sfinstances), len(res.Data))
+}
+
+func TestListSmartFeature_InternalError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockStorage := mocks.NewMockStorage(ctrl)
+
+	// Simulate the storage error (internal error)
+	mockStorage.
+		EXPECT().
+		ListSmartFeatures(gomock.Any()).
+		Return(nil, nil, status.Errorf(codes.Internal, "Internal error")).
+		Times(1)
+
+	server := &SmartServiceServer{Storage: mockStorage}
+
+	req := &pb.SmartFeatureListQuery{}
+
+	_, err := server.ListSmartFeature(context.Background(), req)
+	assert.Error(t, err)
+	// assert the error is Internal gives the correct error code
+	if status, ok := status.FromError(err); ok {
+		assert.Equal(t, codes.Internal, status.Code())
+	}
+}
+
+func TestListSmartFeature_InvalidOrderBy(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockStorage := mocks.NewMockStorage(ctrl)
+
+	server := &SmartServiceServer{Storage: mockStorage}
+
+	req := &pb.SmartFeatureListQuery{
+		OrderBy: "invalid",
+	}
+
+	mockStorage.
+		EXPECT().
+		ListSmartFeatures(gomock.Any()).
+		Return(nil, nil, apperrors.ErrInvalidOrderBy).
+		Times(1)
+
+	_, err := server.ListSmartFeature(context.Background(), req)
+	assert.Error(t, err)
+	// assert the error is InvalidArgument gives the correct error code
+	if status, ok := status.FromError(err); ok {
+		assert.Equal(t, codes.InvalidArgument, status.Code())
+	}
+}

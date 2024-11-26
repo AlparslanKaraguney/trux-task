@@ -13,7 +13,7 @@ services:
       - .env
 
   db:
-    image: postgres:15.0
+    image: postgres:15.0-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -29,7 +29,7 @@ services:
     #   - postgres-data:/var/lib/postgresql/data
 
   # db-test:
-  #   image: postgres:15.0
+  #   image: postgres:15.0-alpine
   #   environment:
   #     - POSTGRES_USER=postgres
   #     - POSTGRES_PASSWORD=postgres

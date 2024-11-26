@@ -6,6 +6,8 @@ PACKAGES=$(go list ./... | grep -v /mocks | grep -v /proto | grep -v /client)
 # Convert package list to comma-separated string
 COVERPKG=$(echo $PACKAGES | tr ' ' ',')
 
+go clean -testcache
+
 # Run tests with coverage
 go test -coverpkg="$COVERPKG" -coverprofile=coverage.out $PACKAGES
 

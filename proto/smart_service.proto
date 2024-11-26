@@ -9,11 +9,13 @@ service SmartService {
   rpc GetSmartModel(SmartModelQuery) returns (SmartModelResponse);
   rpc UpdateSmartModel(SmartModelRequest) returns (SmartModelResponse);
   rpc DeleteSmartModel(SmartModelQuery) returns (DeleteResponse);
+  rpc ListSmartModel(SmartModelListQuery) returns (SmartModelListResponse);
 
   rpc CreateSmartFeature(SmartFeatureRequest) returns (SmartFeatureResponse);
   rpc GetSmartFeature(SmartFeatureQuery) returns (SmartFeatureResponse);
   rpc UpdateSmartFeature(SmartFeatureRequest) returns (SmartFeatureResponse);
   rpc DeleteSmartFeature(SmartFeatureQuery) returns (DeleteResponse);
+  rpc ListSmartFeature(SmartFeatureListQuery) returns (SmartFeatureListResponse);
 }
 
 message SmartModel {
@@ -30,7 +32,7 @@ message SmartFeature {
   string name = 2;
   string identifier = 3;
   string functionality = 4;
-  int32 smart_model_id = 5;
+  int32 smartModelId = 5;
 }
 
 message SmartModelRequest {
@@ -60,4 +62,40 @@ message SmartFeatureQuery {
 message DeleteResponse {
   string message = 1;
   bool success = 2;
+}
+
+message SmartModelListQuery {
+  int32 limit = 1;
+  int32 offset = 2;
+  string name = 3;
+  string identifier = 4;
+  string type = 5;
+  string category = 6;
+  string orderBy = 7;
+}
+
+message SmartFeatureListQuery {
+  int32 limit = 1;
+  int32 offset = 2;
+  string name = 3;
+  string identifier = 4;
+  string functionality = 5;
+  int32 smartModelId = 6;
+  string orderBy = 7;
+}
+
+message SmartModelListResponse {
+  repeated SmartModel data = 1;
+  Pagination pagination = 2;
+}
+
+message SmartFeatureListResponse {
+  repeated SmartFeature data = 1;
+  Pagination pagination = 2;
+}
+
+message Pagination {
+  int32 offset = 1;
+  int32 limit = 2;
+  int32 totalRows = 3;
 }

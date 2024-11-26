@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -90,6 +91,8 @@ func startHTTPServer(addr string, log *logrus.Logger) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
+
+	fmt.Println("addr", addr)
 
 	log.Infof("HTTP health check server running on %s", addr)
 	if err := http.ListenAndServe(addr, nil); err != nil {

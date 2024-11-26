@@ -3,28 +3,26 @@ FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
-# Install build tools for CGO
-RUN apk update && apk add --no-cache gcc musl-dev
-
-# Copy go.mod and go.sum files and download dependencies
+# Only copy dependencies initially
 COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy the rest of the source code
 COPY . .
 
-# Build the Go application with CGO enabled
-RUN CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/server/main.go
+# Build the Go application (static binary) with no debug information
+# If you want to include debug information, remove the -s -w flags
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o server ./cmd/server/main.go
 
 # Stage 2 - Final Stage
-FROM alpine:latest
+FROM scratch
 
 WORKDIR /app
 
-# Install necessary runtime dependencies
-RUN apk add --no-cache ca-certificates
+# Copy CA certificates for HTTPS support
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-# Copy the built binary and any required files
+# Copy the built binary
 COPY --from=builder /app/server .
 
 # Expose the port the application listens on

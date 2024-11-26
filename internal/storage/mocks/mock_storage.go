@@ -7,7 +7,9 @@ package mocks
 import (
 	reflect "reflect"
 
+	entities "github.com/AlparslanKaraguney/trux-task/internal/entities"
 	models "github.com/AlparslanKaraguney/trux-task/internal/models"
+	filter "github.com/AlparslanKaraguney/trux-task/internal/storage/filter"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -118,6 +120,38 @@ func (m *MockStorage) GetSmartModel(id int32) (*models.SmartModel, error) {
 func (mr *MockStorageMockRecorder) GetSmartModel(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSmartModel", reflect.TypeOf((*MockStorage)(nil).GetSmartModel), id)
+}
+
+// ListSmartFeatures mocks base method.
+func (m *MockStorage) ListSmartFeatures(filter *filter.SmartFeatureFilter) ([]models.SmartFeature, *entities.Pagination, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListSmartFeatures", filter)
+	ret0, _ := ret[0].([]models.SmartFeature)
+	ret1, _ := ret[1].(*entities.Pagination)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// ListSmartFeatures indicates an expected call of ListSmartFeatures.
+func (mr *MockStorageMockRecorder) ListSmartFeatures(filter interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSmartFeatures", reflect.TypeOf((*MockStorage)(nil).ListSmartFeatures), filter)
+}
+
+// ListSmartModels mocks base method.
+func (m *MockStorage) ListSmartModels(filter *filter.SmartModelFilter) ([]models.SmartModel, *entities.Pagination, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListSmartModels", filter)
+	ret0, _ := ret[0].([]models.SmartModel)
+	ret1, _ := ret[1].(*entities.Pagination)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// ListSmartModels indicates an expected call of ListSmartModels.
+func (mr *MockStorageMockRecorder) ListSmartModels(filter interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSmartModels", reflect.TypeOf((*MockStorage)(nil).ListSmartModels), filter)
 }
 
 // UpdateSmartFeature mocks base method.
