@@ -2,6 +2,7 @@ package storage
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/AlparslanKaraguney/trux-task/internal/entities"
 	"github.com/AlparslanKaraguney/trux-task/internal/models"
@@ -19,6 +20,7 @@ type Storage interface {
 	UpdateSmartModel(model *models.SmartModel) error
 	DeleteSmartModel(id int32) error
 	ListSmartModels(filter *filter.SmartModelFilter) ([]models.SmartModel, *entities.Pagination, error)
+	SmartModelSearchOptions(filter string) ([]string, error)
 
 	CreateSmartFeature(feature *models.SmartFeature) error
 	GetSmartFeature(id int32) (*models.SmartFeature, error)
@@ -67,6 +69,8 @@ func (s *storageImpl) UpdateSmartModel(model *models.SmartModel) error {
 		}
 	}
 
+	result = s.db.Preload("Features").Where("id = ?", model.ID).First(&model)
+
 	return result.Error
 }
 
@@ -80,12 +84,21 @@ func (s *storageImpl) DeleteSmartModel(id int32) error {
 func (s *storageImpl) ListSmartModels(filter *filter.SmartModelFilter) ([]models.SmartModel, *entities.Pagination, error) {
 	var models []models.SmartModel
 	query := s.db.Model(&models)
+
+	// Check the dialect (SQLite vs PostgreSQL)
+	var caseInsensitiveComparison string
+	if strings.Contains(s.db.Dialector.Name(), "sqlite") {
+		caseInsensitiveComparison = "LIKE"
+	} else {
+		caseInsensitiveComparison = "ILIKE"
+	}
+
 	if filter != nil {
 		if filter.Identifier != "" {
 			query = query.Where("identifier = ?", filter.Identifier)
 		}
 		if filter.Name != "" {
-			query = query.Where("name = ?", filter.Name)
+			query = query.Where("name "+caseInsensitiveComparison+" ?", "%"+filter.Name+"%")
 		}
 		if filter.Type != "" {
 			query = query.Where("type = ?", filter.Type)
@@ -113,6 +126,21 @@ func (s *storageImpl) ListSmartModels(filter *filter.SmartModelFilter) ([]models
 	query, pagination := paginate(int(filter.Limit), int(filter.Offset), query)
 	result := query.Preload("Features").Find(&models)
 	return models, pagination, result.Error
+}
+
+func (s *storageImpl) SmartModelSearchOptions(filter string) ([]string, error) {
+	var options []string
+	switch filter {
+	case "category":
+		result := s.db.Model(&models.SmartModel{}).Distinct("category").Pluck("category", &options)
+		return options, result.Error
+	case "type":
+		result := s.db.Model(&models.SmartModel{}).Distinct("type").Pluck("type", &options)
+		return options, result.Error
+	default:
+		return nil, apperrors.ErrInvalidFilter
+	}
+
 }
 
 func (s *storageImpl) CreateSmartFeature(feature *models.SmartFeature) error {
@@ -161,12 +189,21 @@ func (s *storageImpl) DeleteSmartFeature(id int32) error {
 func (s *storageImpl) ListSmartFeatures(filter *filter.SmartFeatureFilter) ([]models.SmartFeature, *entities.Pagination, error) {
 	var features []models.SmartFeature
 	query := s.db.Model(&features)
+
+	// Check the dialect (SQLite vs PostgreSQL)
+	var caseInsensitiveComparison string
+	if strings.Contains(s.db.Dialector.Name(), "sqlite") {
+		caseInsensitiveComparison = "LIKE"
+	} else {
+		caseInsensitiveComparison = "ILIKE"
+	}
+
 	if filter != nil {
 		if filter.Identifier != "" {
 			query = query.Where("identifier = ?", filter.Identifier)
 		}
 		if filter.Name != "" {
-			query = query.Where("name = ?", filter.Name)
+			query = query.Where("name "+caseInsensitiveComparison+" ?", "%"+filter.Name+"%")
 		}
 		if filter.Functionality != "" {
 			query = query.Where("functionality = ?", filter.Functionality)

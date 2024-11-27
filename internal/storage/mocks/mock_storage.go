@@ -154,6 +154,21 @@ func (mr *MockStorageMockRecorder) ListSmartModels(filter interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSmartModels", reflect.TypeOf((*MockStorage)(nil).ListSmartModels), filter)
 }
 
+// SmartModelSearchOptions mocks base method.
+func (m *MockStorage) SmartModelSearchOptions(filter string) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SmartModelSearchOptions", filter)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SmartModelSearchOptions indicates an expected call of SmartModelSearchOptions.
+func (mr *MockStorageMockRecorder) SmartModelSearchOptions(filter interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SmartModelSearchOptions", reflect.TypeOf((*MockStorage)(nil).SmartModelSearchOptions), filter)
+}
+
 // UpdateSmartFeature mocks base method.
 func (m *MockStorage) UpdateSmartFeature(feature *models.SmartFeature) error {
 	m.ctrl.T.Helper()

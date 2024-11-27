@@ -58,14 +58,15 @@ func (s *SmartServiceServer) UpdateSmartModel(ctx context.Context, req *pb.Smart
 	if model.Id == 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "Id is required")
 	}
-
-	err := s.Storage.UpdateSmartModel(&models.SmartModel{
+	instance := &models.SmartModel{
 		ID:         model.Id,
 		Name:       model.Name,
 		Identifier: model.Identifier,
 		Type:       model.Type,
 		Category:   model.Category,
-	})
+	}
+
+	err := s.Storage.UpdateSmartModel(instance)
 
 	if err != nil {
 		if errors.Is(err, apperrors.ErrNotFound) {
@@ -77,7 +78,7 @@ func (s *SmartServiceServer) UpdateSmartModel(ctx context.Context, req *pb.Smart
 		return nil, status.Errorf(codes.Internal, "Failed to update SmartModel: %v", err)
 	}
 
-	return &pb.SmartModelResponse{Model: model}, nil
+	return &pb.SmartModelResponse{Model: convertToProtoSmartModel(instance)}, nil
 }
 
 func (s *SmartServiceServer) DeleteSmartModel(ctx context.Context, req *pb.SmartModelQuery) (*pb.DeleteResponse, error) {
@@ -133,6 +134,15 @@ func (s *SmartServiceServer) ListSmartModel(ctx context.Context, req *pb.SmartMo
 		Pagination: convertToProtoPagination(pagination),
 	}, nil
 
+}
+
+func (s *SmartServiceServer) SmartModelSearchOptions(ctx context.Context, req *pb.OptionsRequest) (*pb.OptionsResponse, error) {
+	options, err := s.Storage.SmartModelSearchOptions(req.Filter)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to list SmartModels: %v", err)
+	}
+
+	return &pb.OptionsResponse{Value: options}, nil
 }
 
 func (s *SmartServiceServer) CreateSmartFeature(ctx context.Context, req *pb.SmartFeatureRequest) (*pb.SmartFeatureResponse, error) {

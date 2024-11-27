@@ -654,6 +654,8 @@ func TestStorageListSmartModels_FilterByLimitAndOffset(t *testing.T) {
 	err = mokcedStorage.CreateSmartModel(sminstance1)
 	assert.NoError(t, err)
 
+	time.Sleep(1 * time.Microsecond)
+
 	sminstance2 := &models.SmartModel{
 		Name:       "Smart Phone",
 		Identifier: "sp-001",

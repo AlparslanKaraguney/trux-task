@@ -1,6 +1,6 @@
 # **Smart Service**
 
-A gRPC-based service for managing smart models and features, built with Go, GORM, and PostgreSQL, and deployable on Minikube.
+A gRPC-based service for managing smart models and features, built with Go, GORM, and PostgreSQL, and deployable on Minikube. You can check the API documantation from docs.md.
 
 ---
 
@@ -114,11 +114,19 @@ Verify the pod status:
 kubectl get pods
 ```
 
-Expose services locally by starting a tunnel to expose them on your local machine:
+Once both services reach the "READY" state of "1/1," you can locally expose them by initiating a tunnel, making the services accessible on your local machine:
 
 ```bash
 minikube tunnel
 ```
+
+You can always check the logs of the services by simply:
+
+```bash
+kubectl logs -f <pod-name>
+```
+
+A structured logging mechanism has been implemented, capturing both SQL/GORM logs and request logs, which are printed to the terminal. By default SQL logs are set to silent, to see SQL logs, you can set the environment variable DATABASE_LOG_LEVEL to "info".
 
 ### **Delete All Instances**
 

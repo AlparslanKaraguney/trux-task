@@ -19,16 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SmartService_CreateSmartModel_FullMethodName   = "/smartservice.SmartService/CreateSmartModel"
-	SmartService_GetSmartModel_FullMethodName      = "/smartservice.SmartService/GetSmartModel"
-	SmartService_UpdateSmartModel_FullMethodName   = "/smartservice.SmartService/UpdateSmartModel"
-	SmartService_DeleteSmartModel_FullMethodName   = "/smartservice.SmartService/DeleteSmartModel"
-	SmartService_ListSmartModel_FullMethodName     = "/smartservice.SmartService/ListSmartModel"
-	SmartService_CreateSmartFeature_FullMethodName = "/smartservice.SmartService/CreateSmartFeature"
-	SmartService_GetSmartFeature_FullMethodName    = "/smartservice.SmartService/GetSmartFeature"
-	SmartService_UpdateSmartFeature_FullMethodName = "/smartservice.SmartService/UpdateSmartFeature"
-	SmartService_DeleteSmartFeature_FullMethodName = "/smartservice.SmartService/DeleteSmartFeature"
-	SmartService_ListSmartFeature_FullMethodName   = "/smartservice.SmartService/ListSmartFeature"
+	SmartService_CreateSmartModel_FullMethodName          = "/smartservice.SmartService/CreateSmartModel"
+	SmartService_GetSmartModel_FullMethodName             = "/smartservice.SmartService/GetSmartModel"
+	SmartService_UpdateSmartModel_FullMethodName          = "/smartservice.SmartService/UpdateSmartModel"
+	SmartService_DeleteSmartModel_FullMethodName          = "/smartservice.SmartService/DeleteSmartModel"
+	SmartService_ListSmartModel_FullMethodName            = "/smartservice.SmartService/ListSmartModel"
+	SmartService_SmartModelSearchOptions_FullMethodName   = "/smartservice.SmartService/SmartModelSearchOptions"
+	SmartService_CreateSmartFeature_FullMethodName        = "/smartservice.SmartService/CreateSmartFeature"
+	SmartService_GetSmartFeature_FullMethodName           = "/smartservice.SmartService/GetSmartFeature"
+	SmartService_UpdateSmartFeature_FullMethodName        = "/smartservice.SmartService/UpdateSmartFeature"
+	SmartService_DeleteSmartFeature_FullMethodName        = "/smartservice.SmartService/DeleteSmartFeature"
+	SmartService_ListSmartFeature_FullMethodName          = "/smartservice.SmartService/ListSmartFeature"
+	SmartService_SmartFeatureSearchOptions_FullMethodName = "/smartservice.SmartService/SmartFeatureSearchOptions"
 )
 
 // SmartServiceClient is the client API for SmartService service.
@@ -40,11 +42,13 @@ type SmartServiceClient interface {
 	UpdateSmartModel(ctx context.Context, in *SmartModelRequest, opts ...grpc.CallOption) (*SmartModelResponse, error)
 	DeleteSmartModel(ctx context.Context, in *SmartModelQuery, opts ...grpc.CallOption) (*DeleteResponse, error)
 	ListSmartModel(ctx context.Context, in *SmartModelListQuery, opts ...grpc.CallOption) (*SmartModelListResponse, error)
+	SmartModelSearchOptions(ctx context.Context, in *OptionsRequest, opts ...grpc.CallOption) (*OptionsResponse, error)
 	CreateSmartFeature(ctx context.Context, in *SmartFeatureRequest, opts ...grpc.CallOption) (*SmartFeatureResponse, error)
 	GetSmartFeature(ctx context.Context, in *SmartFeatureQuery, opts ...grpc.CallOption) (*SmartFeatureResponse, error)
 	UpdateSmartFeature(ctx context.Context, in *SmartFeatureRequest, opts ...grpc.CallOption) (*SmartFeatureResponse, error)
 	DeleteSmartFeature(ctx context.Context, in *SmartFeatureQuery, opts ...grpc.CallOption) (*DeleteResponse, error)
 	ListSmartFeature(ctx context.Context, in *SmartFeatureListQuery, opts ...grpc.CallOption) (*SmartFeatureListResponse, error)
+	SmartFeatureSearchOptions(ctx context.Context, in *OptionsRequest, opts ...grpc.CallOption) (*OptionsResponse, error)
 }
 
 type smartServiceClient struct {
@@ -105,6 +109,16 @@ func (c *smartServiceClient) ListSmartModel(ctx context.Context, in *SmartModelL
 	return out, nil
 }
 
+func (c *smartServiceClient) SmartModelSearchOptions(ctx context.Context, in *OptionsRequest, opts ...grpc.CallOption) (*OptionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OptionsResponse)
+	err := c.cc.Invoke(ctx, SmartService_SmartModelSearchOptions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *smartServiceClient) CreateSmartFeature(ctx context.Context, in *SmartFeatureRequest, opts ...grpc.CallOption) (*SmartFeatureResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SmartFeatureResponse)
@@ -155,6 +169,16 @@ func (c *smartServiceClient) ListSmartFeature(ctx context.Context, in *SmartFeat
 	return out, nil
 }
 
+func (c *smartServiceClient) SmartFeatureSearchOptions(ctx context.Context, in *OptionsRequest, opts ...grpc.CallOption) (*OptionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OptionsResponse)
+	err := c.cc.Invoke(ctx, SmartService_SmartFeatureSearchOptions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SmartServiceServer is the server API for SmartService service.
 // All implementations must embed UnimplementedSmartServiceServer
 // for forward compatibility.
@@ -164,11 +188,13 @@ type SmartServiceServer interface {
 	UpdateSmartModel(context.Context, *SmartModelRequest) (*SmartModelResponse, error)
 	DeleteSmartModel(context.Context, *SmartModelQuery) (*DeleteResponse, error)
 	ListSmartModel(context.Context, *SmartModelListQuery) (*SmartModelListResponse, error)
+	SmartModelSearchOptions(context.Context, *OptionsRequest) (*OptionsResponse, error)
 	CreateSmartFeature(context.Context, *SmartFeatureRequest) (*SmartFeatureResponse, error)
 	GetSmartFeature(context.Context, *SmartFeatureQuery) (*SmartFeatureResponse, error)
 	UpdateSmartFeature(context.Context, *SmartFeatureRequest) (*SmartFeatureResponse, error)
 	DeleteSmartFeature(context.Context, *SmartFeatureQuery) (*DeleteResponse, error)
 	ListSmartFeature(context.Context, *SmartFeatureListQuery) (*SmartFeatureListResponse, error)
+	SmartFeatureSearchOptions(context.Context, *OptionsRequest) (*OptionsResponse, error)
 	mustEmbedUnimplementedSmartServiceServer()
 }
 
@@ -194,6 +220,9 @@ func (UnimplementedSmartServiceServer) DeleteSmartModel(context.Context, *SmartM
 func (UnimplementedSmartServiceServer) ListSmartModel(context.Context, *SmartModelListQuery) (*SmartModelListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSmartModel not implemented")
 }
+func (UnimplementedSmartServiceServer) SmartModelSearchOptions(context.Context, *OptionsRequest) (*OptionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SmartModelSearchOptions not implemented")
+}
 func (UnimplementedSmartServiceServer) CreateSmartFeature(context.Context, *SmartFeatureRequest) (*SmartFeatureResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSmartFeature not implemented")
 }
@@ -208,6 +237,9 @@ func (UnimplementedSmartServiceServer) DeleteSmartFeature(context.Context, *Smar
 }
 func (UnimplementedSmartServiceServer) ListSmartFeature(context.Context, *SmartFeatureListQuery) (*SmartFeatureListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSmartFeature not implemented")
+}
+func (UnimplementedSmartServiceServer) SmartFeatureSearchOptions(context.Context, *OptionsRequest) (*OptionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SmartFeatureSearchOptions not implemented")
 }
 func (UnimplementedSmartServiceServer) mustEmbedUnimplementedSmartServiceServer() {}
 func (UnimplementedSmartServiceServer) testEmbeddedByValue()                      {}
@@ -320,6 +352,24 @@ func _SmartService_ListSmartModel_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SmartService_SmartModelSearchOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OptionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SmartServiceServer).SmartModelSearchOptions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SmartService_SmartModelSearchOptions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SmartServiceServer).SmartModelSearchOptions(ctx, req.(*OptionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SmartService_CreateSmartFeature_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SmartFeatureRequest)
 	if err := dec(in); err != nil {
@@ -410,6 +460,24 @@ func _SmartService_ListSmartFeature_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SmartService_SmartFeatureSearchOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OptionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SmartServiceServer).SmartFeatureSearchOptions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SmartService_SmartFeatureSearchOptions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SmartServiceServer).SmartFeatureSearchOptions(ctx, req.(*OptionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SmartService_ServiceDesc is the grpc.ServiceDesc for SmartService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -438,6 +506,10 @@ var SmartService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SmartService_ListSmartModel_Handler,
 		},
 		{
+			MethodName: "SmartModelSearchOptions",
+			Handler:    _SmartService_SmartModelSearchOptions_Handler,
+		},
+		{
 			MethodName: "CreateSmartFeature",
 			Handler:    _SmartService_CreateSmartFeature_Handler,
 		},
@@ -456,6 +528,10 @@ var SmartService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListSmartFeature",
 			Handler:    _SmartService_ListSmartFeature_Handler,
+		},
+		{
+			MethodName: "SmartFeatureSearchOptions",
+			Handler:    _SmartService_SmartFeatureSearchOptions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

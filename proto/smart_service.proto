@@ -10,6 +10,7 @@ service SmartService {
   rpc UpdateSmartModel(SmartModelRequest) returns (SmartModelResponse);
   rpc DeleteSmartModel(SmartModelQuery) returns (DeleteResponse);
   rpc ListSmartModel(SmartModelListQuery) returns (SmartModelListResponse);
+  rpc SmartModelSearchOptions(OptionsRequest) returns (OptionsResponse);
 
   rpc CreateSmartFeature(SmartFeatureRequest) returns (SmartFeatureResponse);
   rpc GetSmartFeature(SmartFeatureQuery) returns (SmartFeatureResponse);
@@ -98,4 +99,12 @@ message Pagination {
   int32 offset = 1;
   int32 limit = 2;
   int32 totalRows = 3;
+}
+
+message OptionsRequest {
+  string filter = 1;
+}
+
+message OptionsResponse {
+  repeated string value = 1;
 }
