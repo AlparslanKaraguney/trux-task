@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Generate package list excluding 'mocks'
-PACKAGES=$(go list ./... | grep -v /mocks | grep -v /proto | grep -v /client)
+PACKAGES=$(go list ./... | grep -v /mocks | grep -v /proto)
 
 # Convert package list to comma-separated string
 COVERPKG=$(echo $PACKAGES | tr ' ' ',')
